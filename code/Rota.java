@@ -31,7 +31,7 @@ public class Rota{
 	public void ler_mapa(String s_mapa){
 		
 		try {
-			FileReader arq = new FileReader("../test/"+s_mapa);
+			FileReader arq = new FileReader("test/"+s_mapa);
 			Scanner lerArq = new Scanner(arq);
 
 			this.lin = lerArq.nextInt();

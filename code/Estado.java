@@ -40,7 +40,8 @@ public class Estado implements Comparable<Estado>{
 
 	public boolean equals(Object o){
 		Estado est = (Estado) o;
-		if(this.p.getX() == est.getPonto().getX() && this.p.getY() == est.getPonto().getY() ) return true;
+		if(this.p.getX() == est.getPonto().getX() && 
+			this.p.getY() == est.getPonto().getY()) return true;
 		else return false;
 	} 
 	

@@ -1,4 +1,4 @@
-all: compile run
+all: clean compile run
 
 compile:
 	@javac code/*.java -d ./bin

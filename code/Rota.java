@@ -8,34 +8,32 @@ public class Rota{
 	private int mapa[][];
 	private int lin;
 	private int col;
-	private int pessoa_p[];
-	private int ini_p[];
+	private int destino[];
+	private int partida[];
+	private Point dest;
+	private Point part;
 
 	public Rota(String s_mapa){
 		this.mapa = null;
 		this.lin = 0;
 		this.col = 0;
-		this.pessoa_p = new int[2];
-		this.ini_p = new int[2];
+		this.destino = new int[2];
+		this.partida = new int[2];
 		this.ler_mapa(s_mapa);
 	}
 
-
-	public  ArrayList<Point> achar_rota_h(){ 
+	public void setPart( Point part) { this.part = part; }
+	public void setDest( Point part) { this.dest = dest; }
+	public Point getPart() { return this.part; }
+	public Point getdest() { return this.dest; }
+	
+	public  ArrayList<Point> acharRotaH(){ 
 
 		/* distancia em relacao a saida*/
-		int matrizH[][] = this.heuristica(this.pessoa_p);
+		int matrizH[][] = this.heuristica(this.destino);
 	
-		for(int i=0; i< this.lin;i++){
-			for(int j=0; j<this.col; j++){
-				System.out.print(matrizH[i][j]);
-			}
-			System.out.println();
-		}
-
-		Estado pessoa = new Estado (new Point(pessoa_p[0],pessoa_p[1]),matrizH[pessoa_p[0]][pessoa_p[1]],0,null);
-		Estado entrada = new Estado (new Point(ini_p[0], ini_p[1]), matrizH[ini_p[0]][ini_p[1]],0,null);	
-
+		Estado pessoa = new Estado (new Point(destino[0],destino[1]),matrizH[destino[0]][destino[1]],0,null);
+		Estado entrada = new Estado (new Point(partida[0], partida[1]), matrizH[partida[0]][partida[1]],0,null);	
 		ArrayList<Estado> pQ = new ArrayList<Estado>();
 		ArrayList<Estado> saida = new ArrayList<Estado>();
 		pQ.add(entrada);
@@ -49,7 +47,7 @@ public class Rota{
 			saida.add(pQ.get(pQ.indexOf(e)));
 			pQ.remove(e);	
 
-			System.out.println("X="+e.getPonto().getX()+" Y="+e.getPonto().getY());
+			//System.out.println("X="+e.getPonto().getX()+" Y="+e.getPonto().getY());
 
 			if(pessoa.equals(e)) break; 
 			ArrayList<Estado> viz = proxEst(matrizH,e);
@@ -73,12 +71,13 @@ public class Rota{
 	}
 
 
-	public  ArrayList<Point> achar_rota(int[] destino){
+	public  ArrayList<Point> acharRota(){
+
             ArrayList<Point> fila = new ArrayList<Point>();
             int visitados[][] = new int[lin][col];
             HashMap<Point, Point> antecessores = new HashMap<Point, Point>();
             
-            fila.add(new Point(ini_p[0], ini_p[1]));
+            fila.add(new Point(partida[0], partida[1]));
             Point p = fila.get(0);
             antecessores.put(p, null);
             visitados[(int)p.getX()][(int)p.getY()] = 1;
@@ -163,27 +162,9 @@ public class Rota{
 		return cam;
 	}
 
-	public void imprimeRota(ArrayList<Point> rota){
-		
-		char mapa[][] = new char[this.lin][this.col];
-
-		for(int i=0; i < this.lin; i++){
-			for(int j=0; j< this.col; j++){
-				if (this.mapa[i][j] == 0) mapa[i][j] = '0';
-				else if (this.mapa[i][j] == 1) mapa[i][j] = '+';
-			}
-		}
-
-		for(Point p : rota){
-			mapa[(int)p.getX()][(int)p.getY()] = '*';
-		}
-
-		imprimeMapa(mapa);
-
-		return;
-	}
 
 	private ArrayList<Estado> proxEst(int matrizH [][], Estado e){
+
 		int lin= (int)e.getPonto().getX();
 		int col= (int)e.getPonto().getY();
 		ArrayList<Estado> arr = new ArrayList<Estado>();
@@ -208,6 +189,7 @@ public class Rota{
 	}
 
 	private int [][] heuristica(int ini[]){
+
 		int [][] m = new int[this.lin][this.col];
 		for(int i=0; i<this.lin; i++){
 			for(int j=0; j<this.col; j++){
@@ -227,10 +209,13 @@ public class Rota{
 			this.lin = lerArq.nextInt();
 			this.col = lerArq.nextInt();
 			
-			this.ini_p[0] = lerArq.nextInt();
-			this.ini_p[1] = lerArq.nextInt();
-			this.pessoa_p[0] =  lerArq.nextInt();
-			this.pessoa_p[1] = lerArq.nextInt(); 
+			this.part = new Point (lerArq.nextInt(), lerArq.nextInt());
+			this.dest = new Point (lerArq.nextInt(), lerArq.nextInt());
+
+			this.partida[0] = (int)this.part.getX();
+			this.partida[1] = (int)this.part.getY();
+			this.destino[0] =  (int)this.dest.getX();
+			this.destino[1] = (int)this.dest.getY();
 
 			this.mapa = new int[lin][col];
 
@@ -246,25 +231,63 @@ public class Rota{
 	}
 
 	public void imprimeMapa(){
-		System.out.println("Coordenada da entrada.: X="+this.ini_p[0]+" Y="+this.ini_p[1]);
-		System.out.println("Coordenada da pessoa..: X="+this.pessoa_p[0]+" Y="+this.pessoa_p[1]);
-		for(int i=0; i<this.lin; i++){
-			for(int j=0; j<this.col; j++)
-				System.out.print(this.mapa[i][j]+" ");
-			System.out.println();
-		}
 
-                achar_rota(pessoa_p);
+		this.imprimeMapa(this.desenhaMapa());
+
+		return;	
 	}
 
 	private void imprimeMapa(char mapa[][]){
+
 		for(int i=0; i<this.lin; i++){
 			for(int j=0; j<this.col; j++)
 				System.out.print(mapa[i][j]+" ");
 			System.out.println();
 		}
-
+		
+		return;
 	}
 
+
+	private char[][] desenhaMapa(){
+		
+		char mapa[][] = new char[this.lin][this.col];
+
+		for(int i=0; i < this.lin; i++){
+			for(int j=0; j< this.col; j++){
+				if (this.mapa[i][j] == 0) mapa[i][j] = '0';
+				else if (this.mapa[i][j] == 1) mapa[i][j] = '+';
+			}
+		}
+		return mapa;
+	}
+
+	public void imprimeRota(ArrayList<Point> rota){
+	
+		char mapa[][] = this.desenhaMapa();
+		int partX = (int)this.part.getX();
+		int partY = (int)this.part.getY();
+		int destX = (int)this.dest.getX();
+		int destY = (int)this.dest.getY();
+	
+		System.out.println("Coordenada de partida.: X="+partX+" Y="+partY);
+		System.out.println("Coordenada de destino.: X="+destX+" Y="+destY+"\n");
+
+		for(Point p : rota)
+			mapa[(int)p.getX()][(int)p.getY()] = '*';
+
+		mapa[destX][destY] = '@';
+		mapa[partX][partY] = '&';
+
+		imprimeMapa(mapa);
+		
+		System.out.println("\nLegenda: ");
+		System.out.println("     [+] - Indica parte bloqueada");
+		System.out.println("     [0] - Indica parte nao bloqueada");
+		System.out.println("     [@] - Indica ponto de destino");
+		System.out.println("     [$] - Indica ponto de partida\n");
+
+		return;
+	}
 
 }

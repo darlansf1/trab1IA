@@ -5,3 +5,6 @@ compile:
 
 run:
 	@java -cp ./bin Programa
+
+clean:
+	@rm -v bin/*.class
